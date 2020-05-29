@@ -45,7 +45,7 @@ module ColorLS
         .gsub('A', 'A'.colorize(colors[:addition]))
         .gsub('M', 'M'.colorize(colors[:modification]))
         .gsub('D', 'D'.colorize(colors[:deletion]))
-        .gsub('!', '-'.colorize(colors[:ignored]))
+        .gsub('!', '.'.colorize(colors[:ignored]))
     end
 
     class << self

@@ -291,9 +291,11 @@ module ColorLS
       name = content.show
       name = make_link(path, name) if @hyperlink
       name += content.directory? ? '/' : ' '
-      entry = logo.encode(Encoding.default_external, undef: :replace, replace: '') + '  ' + name
+      logo_s = logo.encode(Encoding.default_external, undef: :replace, replace: '')
+      logo_color = @colors[:fileicon_color].key?(key) ? @colors[:fileicon_color][key] : color
+      entry = logo_s.colorize(logo_color) + '  ' + name.colorize(color)
 
-      "#{long_info(content)} #{git_info(content)} #{entry.colorize(color)}#{symlink_info(content)}"
+      "#{long_info(content)} #{git_info(content)} #{entry}#{symlink_info(content)}"
     end
 
     def ls_line(chunk, widths)
