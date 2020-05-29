@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require 'pathname'
@@ -44,7 +45,7 @@ module ColorLS
         .gsub('A', 'A'.colorize(colors[:addition]))
         .gsub('M', 'M'.colorize(colors[:modification]))
         .gsub('D', 'D'.colorize(colors[:deletion]))
-        .tr('!', ' ')
+        .gsub('!', '-'.colorize(colors[:ignored]))
     end
 
     class << self

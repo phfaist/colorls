@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module ColorLS
@@ -308,6 +309,10 @@ module ColorLS
     end
 
     def file_color(file, key)
+      if @colors[:file_types].key?(key) then
+        return @colors[:file_types][key]
+      end
+
       color_key = case
                   when file.chardev? then :chardev
                   when file.blockdev? then :blockdev

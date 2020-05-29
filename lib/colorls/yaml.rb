@@ -16,11 +16,26 @@ module ColorLS
 
       return yaml unless aliase
 
-      yaml.to_a.map! { |k, v| v.include?('#') ? [k, v] : [k, v.to_sym] }.to_h
+      #yaml.to_a.map! { |k, v| v.include?('#') ? [k, v] : [k, v.to_sym] }.to_h
+      deep_transform_key_vals_in_object(yaml.to_a, &:to_sym).to_h
     end
 
     def read_file(filepath)
       ::YAML.safe_load(File.read(filepath, encoding: Encoding::UTF_8)).symbolize_keys
     end
+
+    def deep_transform_key_vals_in_object(object, &block)
+      case object
+      when Hash
+        object.each_with_object({}) do |(key, value), result|
+          result[yield(key)] = deep_transform_key_vals_in_object(value, &block)
+        end
+      when Array
+        object.map { |e| deep_transform_key_vals_in_object(e, &block) }
+      else
+        yield object
+      end
+    end
+
   end
 end
