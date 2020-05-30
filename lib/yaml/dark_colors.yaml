@@ -1,6 +1,6 @@
 # Main Colors
 unrecognized_file: gold
-recognized_file:   lime
+recognized_file:   snow #whitesmoke
 dir:               dodgerblue
 
 # Link
@@ -41,4 +41,18 @@ addition:     chartreuse
 modification: darkkhaki
 deletion:     darkred
 untracked:    darkorange
-unchanged:    forestgreen
+unchanged:    lime #forestgreen
+ignored:      darkolivegreen #webgray #darkslategray
+dir_ignored:  skyblue #steelblue
+
+
+# specific file types
+file_types:
+  zip:    sienna
+  log:    darkolivegreen
+  "~":    lime
+
+
+fileicon_color:
+  log:   darkolivegreen
+  file:  webgray

@@ -87,3 +87,17 @@ yaml:             yml
 gz:               zip
 rar:              zip
 tar:              zip
+
+
+# latex log/temp files
+aux:  log
+bbl:  log
+blg:  log
+toc:  log
+out:  log
+bibolamazicache: log
+
+# latex style and dtx files
+sty: tex
+dtx: tex
+ins: tex

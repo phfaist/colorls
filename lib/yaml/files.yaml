@@ -55,7 +55,8 @@ scala:        ""
 shell:        ""
 sqlite3:      ""
 styl:         ""
-tex:          ""
+#tex:          ""
+tex: ""
 ts:           ""
 twig:         ""
 txt:          ""
@@ -67,3 +68,8 @@ xml:          ""
 yarn.lock:    ""
 yml:          ""
 zip:          ""
+
+bib:          ""
+
+
+'~': " "
