@@ -222,45 +222,68 @@ module ColorLS
     end
 
     def process_git_status_details(git_status)
-      @git_status = case
-                    when !git_status then nil
-                    when File.directory?(@input) then Git.status(@input)
-                    else Git.status(File.dirname(@input))
-                    end
+      info = case
+             when !git_status then nil
+             when File.directory?(@input) then Git.status_and_lsfiles(@input)
+             else Git.status_and_lsfiles(File.dirname(@input))
+             end
+      @git_status = info[0]
+      @git_lsfiles = info[1]
     end
 
-    def git_info(content)
-      return '' unless @git_status
+    def git_modes(content)
+      return Set[] unless @git_status
 
       if content.directory?
-        git_dir_info(content.name)
+        git_dir_modes(content.name)
       else
-        git_file_info(content.name)
+        git_file_modes(content.name)
       end
     end
 
-    def git_file_info(path)
+    def git_file_modes(path)
       unless @git_status[path]
         return '  ✓ '
                .encode(Encoding.default_external, undef: :replace, replace: '=')
                .colorize(@colors[:unchanged])
       end
 
-      Git.colored_status_symbols(@git_status[path], @colors)
+      @git_status[path] #Git.colored_status_symbols(@git_status[path], @colors)
     end
 
-    def git_dir_info(path)
-      modes = if path == '.'
-                Set.new(@git_status.values).flatten
-              else
-                @git_status[path]
-              end
+    def git_dir_modes(path)
+      #modes = if path == '.'
+      #          Set.new(@git_status.values).flatten
+      #        else
+      #          @git_status[path]
+      #        end
+
+      modes = git_dir_recursive_modes(path)
 
       if modes.empty? && Dir.empty?(File.join(@input, path))
-        '    '
+        Set[] # '    '
       else
-        Git.colored_status_symbols(modes, @colors)
+        modes #Git.colored_status_symbols(modes, @colors)
       end
+    end
+
+    def git_dir_recursive_modes(path)
+      st = @git_status.select { |k, modes| path_is_descendant(k, path) }
+      modes = Set.new(st.values).flatten
+
+      # if dir has boring up-to-date files then don't mark it as ignored
+      unless @git_lsfiles.select { |f| path_is_descendant(path, f) }.empty?
+        modes.keep_if { |m| m != '!!' }
+      end
+
+      modes
+    end
+
+    def path_is_descendant(path_descendant, path_parent)
+      a_list = File.join(@input, path_descendant).split('/')
+      b_list = File.join(@input, path_parent).split('/')
+
+      b_list[0..a_list.size-1] == a_list
     end
 
     def long_info(content)
@@ -294,13 +317,20 @@ module ColorLS
       logo_s = logo.encode(Encoding.default_external, undef: :replace, replace: '')
       logo_color = @colors[:fileicon_color].key?(key) ? @colors[:fileicon_color][key] : color
 
-      the_git_info = git_info(content)
+      the_git_info = '    '
       if @git_status then
-        modes = @git_status[content.name].to_a.join
-        if modes.include?('!') then
-          logo_color = @colors[:ignored]
-          color = @colors[:ignored]
+        modes = git_modes(content)
+
+        the_git_info = Git.colored_status_symbols(modes, @colors)
+
+        #if content.directory?
+        #else
+        if modes.include?('!!') then
+          ign_color = @colors[(content.directory?) ? :dir_ignored : :ignored]
+          logo_color = ign_color
+          color = ign_color
         end
+        #end
       end
 
       entry = logo_s.colorize(logo_color) + '  ' + name.colorize(color)

@@ -5,10 +5,10 @@ require 'pathname'
 
 module ColorLS
   module Git
-    def self.status(repo_path)
+    def self.status_and_lsfiles(repo_path)
       prefix = git_prefix(repo_path)
 
-      return unless $CHILD_STATUS.success?
+      return [nil,nil] unless $CHILD_STATUS.success?
 
       prefix = Pathname.new(prefix.chomp)
 
@@ -28,7 +28,20 @@ module ColorLS
       end
       warn "git status failed in #{repo_path}" unless $CHILD_STATUS.success?
 
-      git_status
+      git_lsfiles = []
+
+      git_ls_files(repo_path) do |output|
+        while (status_line = output.gets "\x0")
+          file = status_line.chomp("\x0")
+
+          path = Pathname.new(file) #.relative_path_from(prefix)
+
+          git_lsfiles.append(path)
+        end
+      end
+      warn "git ls-files failed in #{repo_path}" unless $CHILD_STATUS.success?
+
+      [git_status, git_lsfiles]
     end
 
     def self.colored_status_symbols(modes, colors)
@@ -36,6 +49,11 @@ module ColorLS
         return '  ✓ '
                .encode(Encoding.default_external, undef: :replace, replace: '=')
                .colorize(colors[:unchanged])
+      end
+
+      # remove "ignored" flag unless it's the only flag
+      if modes.count >= 2 and modes.include?("!!") then
+        modes.keep_if { |v| v != "!!" }
       end
 
       modes = modes.to_a.join.uniq.rjust(3).ljust(4)
@@ -58,6 +76,13 @@ module ColorLS
       def git_subdir_status(repo_path)
         yield IO.popen(
           ['git', '-C', repo_path, 'status', '--porcelain', '-z', '-unormal', '--ignored', '.'],
+          external_encoding: Encoding::ASCII_8BIT
+        )
+      end
+
+      def git_ls_files(repo_path)
+        yield IO.popen(
+          ['git', '-C', repo_path, 'ls-files', '-z', '.'],
           external_encoding: Encoding::ASCII_8BIT
         )
       end
