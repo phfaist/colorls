@@ -1,6 +1,6 @@
 # Main Colors
 unrecognized_file: darkred
-recognized_file:   darkgreen
+recognized_file:   black
 dir:               navyblue
 
 # Link
@@ -42,3 +42,10 @@ modification: darkkhaki
 deletion:     darkred
 untracked:    darkorange
 unchanged:    darkgreen
+ignored:      slategray
+
+
+# specific file types
+file_types: {}
+
+fileicon_color: {}
