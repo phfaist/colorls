@@ -43,7 +43,7 @@ deletion:     darkred
 untracked:    darkorange
 unchanged:    lime #forestgreen
 ignored:      darkolivegreen #webgray #darkslategray
-dir_ignored:  skyblue #steelblue
+dir_ignored:  slategray #skyblue #steelblue
 
 
 # specific file types

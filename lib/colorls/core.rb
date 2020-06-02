@@ -227,8 +227,13 @@ module ColorLS
              when File.directory?(@input) then Git.status_and_lsfiles(@input)
              else Git.status_and_lsfiles(File.dirname(@input))
              end
-      @git_status = info[0]
-      @git_lsfiles = info[1]
+      if info.nil?
+        @git_status = nil
+        @git_lsfiles = nil
+      else
+        @git_status = info[0]
+        @git_lsfiles = info[1]
+      end
     end
 
     def git_modes(content)
