@@ -1,0 +1,1 @@
+gem build colorls.gemspec && gem install --user-install colorls-1.4.1.gem

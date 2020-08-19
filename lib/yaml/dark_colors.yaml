@@ -42,17 +42,17 @@ modification: darkkhaki
 deletion:     darkred
 untracked:    darkorange
 unchanged:    lime #forestgreen
-ignored:      darkolivegreen #webgray #darkslategray
-dir_ignored:  slategray #skyblue #steelblue
+ignored:      darkslategray #darkolivegreen #webgray #darkslategray
+dir_ignored:  darkslategray #darkcyan #darkslateblue #slategray #skyblue #steelblue
 
 
 # specific file types
 file_types:
   zip:    sienna
-  log:    darkolivegreen
+  log:    darkgray #darkolivegreen
   "~":    lime
 
 
 fileicon_color:
-  log:   darkolivegreen
+  log:   darkgray #darkolivegreen
   file:  webgray
